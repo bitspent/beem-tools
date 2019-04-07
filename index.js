@@ -6,9 +6,10 @@ const mysql = require('mysql');
 
 const http = require("http");
 
-const core = require('./src/core/app');
-
 const PORT = process.env.PORT || 5000;
+const dev = process.env.PORT || true;
+
+const core = require('./src/core/app');
 
 function setupDB() {
 

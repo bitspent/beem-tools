@@ -24,7 +24,7 @@
   "keywords": [
     "steem",
     "magicdice",
-	"blockchain"
+    "blockchain"
   ],
-  "license": "Public"
+  "license": "MIT"
 }
