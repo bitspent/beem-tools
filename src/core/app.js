@@ -140,7 +140,6 @@ async function checkInOutTransfers(trx) {
             if (transaction['op'][0] === 'transfer') {
                 let amount = transaction['op'][1]['amount'];
                 if (transaction['op'][1]['to'] === to) {
-                    log(transaction['op'][1]['memo']);
                     if (amount.indexOf('STEEM') > 0) {
                         sentSTM += Number(amount.split(' ')[0]);
                     } else {
