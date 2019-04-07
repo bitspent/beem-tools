@@ -1,0 +1,81 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta name="description" content="">
+    <meta name="author" content="Mark Otto, Jacob Thornton, and Bootstrap contributors">
+    <meta name="generator" content="Jekyll v3.8.5">
+    <title>Beem</title>
+
+    <!-- Bootstrap core CSS -->
+    <link href="/css/bootstrap.min.css" rel="stylesheet"
+          integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+
+    <link href="/css/style.css" rel="stylesheet">
+
+</head>
+
+<body>
+
+<div class="d-flex flex-column flex-md-row align-items-center p-3 px-md-4 mb-3 bg-white border-bottom shadow-sm">
+
+    <h5 class="my-0 mr-md-auto font-weight-normal">
+        <span style="vertical-align: middle"><strong><a href="https://magic-dice.com/"
+                                                        target="_blank">MagicDice Stats</a></strong></span>
+    </h5>
+
+    <nav class="my-2 my-md-0 mr-md-3">
+
+    </nav>
+
+    <a class="btn btn-outline-primary" href="https://steemit.com/@aro.steem" target="_blank">Follow</a>
+
+</div>
+
+<div class="px-3 py-3 pt-md-5 pb-md-4 mx-auto text-center">
+    <h1 class="display-6"><strong>Magic Dice Transactions Crawler</strong></h1>
+</div>
+
+<br>
+
+<script>
+    request = function () {
+        const account = document.getElementById('inputAccount').value;
+        const url = 'https://steemconnect.com/sign/transfer?from=' + account + '&to=aro.steem&amount=1.000%20STEEM&memo=magic';
+        window.open(url, '_blank');
+    }
+</script>
+
+<div class="container">
+    <div class="card-deck form-pay">
+        <div class="card mb-4 shadow-sm">
+            <div class="card-header p-2">
+                <img style="vertical-align: middle" src="/icons/icon.png" height="32">
+            </div>
+            <div class="card-body">
+                <form class="form" onsubmit="request(); return true;">
+                    <div class="form-label-group">
+                        Enter Your Steem Account To Get Your Stats:<br><br>
+                        <input type="text" id="inputAccount" class="form-control" placeholder="@SteemAccount" required
+                               autofocus>
+                    </div>
+                    <ul class="list-unstyled mt-3 mb-4">
+                        <li class="text-muted">Results Will Be Sent to Your @SteemAccount - In Transaction Memo from
+                            @aro.steem
+                        </li>
+                    </ul>
+                    <button class="btn btn-lg btn-primary btn-block" type="submit">Get My Stats - 1 STEEM</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<footer class="footer">
+    <div class="container">
+        <span class="text-muted">&copy;  Steem / Magic Dice / Tools </span>
+    </div>
+</footer>
+</body>
+</html>
