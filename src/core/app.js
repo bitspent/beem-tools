@@ -6,6 +6,7 @@ const MSG = process.env.MSG;
 const PROVIDER = process.env.API_PROVIDER;
 const RSP_ACC = process.env.RSP_ACCOUNT;
 const RSP_KEY = dsteem.PrivateKey.fromString(process.env.TOKEN);
+const MAX_SEND = Number(process.env.MAX_SEND || 500);
 
 let serving = false;
 
@@ -67,7 +68,17 @@ async function serve() {
 	
 	stream.on('data', async (block) => {
 		
+		if(users.length > MAX_SEND) {
+			console.log('limit reached!');
+			return;
+		}
+		
 		for (let i = 0; i < block.transactions.length; i++) {
+			
+			if(users.length > MAX_SEND) {
+				console.log('limit reached!');
+				break;
+			}
 			
 			let type = block.transactions[i].operations[0][0];
 			let data = block.transactions[i].operations[0][1];
