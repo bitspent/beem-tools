@@ -117,7 +117,7 @@ module.exports = {
     
     stats: function() {
         return users;
-    }
+    },
 
     run: async function () {
         await serve();
