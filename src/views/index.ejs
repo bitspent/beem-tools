@@ -54,10 +54,8 @@
 				</div>
 				<ul class="list-unstyled mt-3 mb-4">
 					<li><b>Sent Memos:</b></li>
-					<% let i = 0; %>
-					<%for (let user in users){%>
-						<% i++ %>
-						<li>[<%=i%>] <%=user%></li>    
+					<%for (let i = 0; i < users.length; i++){%>
+						<li>[<%=i%>] <%=users[i]%></li>    
 					<%}%>
 				</ul>
             </div>
