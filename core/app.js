@@ -1,5 +1,3 @@
-require('dotenv').config();
-
 const dsteem = require('dsteem');
 
 const MSG = process.env.MSG;
