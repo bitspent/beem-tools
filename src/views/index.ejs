@@ -3,24 +3,13 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-    <meta name="description" content="">
-    <meta name="author" content="Mark Otto, Jacob Thornton, and Bootstrap contributors">
-    <meta name="generator" content="Jekyll v3.8.5">
-    <title>MagicDiceStats</title>
+    <title>BeemTool</title>
 
     <!-- Bootstrap core CSS -->
     <link href="/css/bootstrap.min.css" rel="stylesheet"
           integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
 
     <link href="/css/style.css" rel="stylesheet">
-
-    <script>
-        request = function () {
-            const account = (document.getElementById('inputAccount').value + '').split('@').join('');
-            const url = 'https://steemconnect.com/sign/transfer?from=' + account + '&to=aro.steem&amount=0.250%20STEEM&memo=magic';
-            window.open(url, '_blank');
-        }
-    </script>
 
 </head>
 
@@ -31,7 +20,7 @@
     <h5 class="my-0 mr-md-auto font-weight-normal">
         <span style="vertical-align: middle">
             <strong>
-                <a href="https://magic-dice.com/" target="_blank"> MagicDice Stats </a>
+                <a href="http://www.steembeem.com/" target="_blank"> BeemTool </a>
             </strong>
         </span>
     </h5>
@@ -40,14 +29,14 @@
 
     </nav>
 
-    <a class="btn btn-outline-primary" href="https://steemit.com/@aro.steem" style="vertical-align: middle" target="_blank"><b>Follow Me</b>
+    <a class="btn btn-outline-primary" href="https://steemit.com/@steembeem" style="vertical-align: middle" target="_blank"><b>Follow Me</b>
         <img width="20" src="/icons/steem.png" style="vertical-align: middle">
     </a>
 
 </div>
 
 <div class="px-3 py-3 pt-md-5 pb-md-4 mx-auto text-center">
-    <h1 class="display-6"><strong>Magic Dice Transactions Crawler</strong></h1>
+    <h1 class="display-6"><strong>SteemBeem Tool</strong></h1>
 </div>
 
 <br>
@@ -56,20 +45,21 @@
     <div class="card-deck form-pay">
         <div class="card mb-4 shadow-sm">
             <div class="card-header p-2">
-                <img style="vertical-align: middle" src="/icons/icon.png" height="32">
+                <img style="vertical-align: middle" src="/icons/steem.png" height="32">
             </div>
             <div class="card-body">
-                <form class="form" onsubmit="request(); return true;">
-                    <div class="form-label-group">
-                        Request Your Stats:<br><br>
-                        <input type="text" id="inputAccount" class="form-control" placeholder="@SteemAccount" required
-                               autofocus>
-                    </div>
-                    <ul class="list-unstyled mt-3 mb-4">
-                        <li class="text-muted">Results Will Be Sent to You In Transaction Memo from @steemidol</li>
-                    </ul>
-                    <button class="btn btn-lg btn-primary btn-block" type="submit"><b>Submit 0.25 STEEM</b></button>
-                </form>
+				<div class="form-label-group">
+					Last Instance Stats:<br><br>
+					<input type="text" id="inputAccount" class="form-control" placeholder="@SteemAccount" required autofocus>
+				</div>
+				<ul class="list-unstyled mt-3 mb-4">
+					<li><b>Sent Memos:</b></li>
+					<% let i = 0; %>
+					<%for (let user in users){%>
+						<% i++ %>
+						<li>[<%=i%>] <%=user%></li>    
+					<%}%>
+				</ul>
             </div>
         </div>
     </div>
@@ -77,9 +67,8 @@
 
 <footer class="footer p-1">
     <div class="container">
-        <span class="text-muted">&copy;  Steem / Magic Dice / Tools </span>
+        <span class="text-muted">&copy;  SteemBeem / Tools </span>
     </div>
 </footer>
-
 </body>
 </html>
