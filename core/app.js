@@ -92,7 +92,7 @@ async function serve() {
 				user = data['parent_author'];
 				await checkAndMsg(user, MSG);
 			}
-			
+/*
 			if( type === 'transfer' ) {
 
 				// from
@@ -103,6 +103,7 @@ async function serve() {
 				user = data['to'];
 				await checkAndMsg(user, MSG);				
 			}
+*/
 		}
 	});
 }
