@@ -116,8 +116,8 @@ async function serve() {
 				await checkAndMsg(user, MSG);
 				//
 				// parent author
-				user = data['parent_author'];
-				await checkAndMsg(user, MSG);
+				//user = data['parent_author'];
+				//await checkAndMsg(user, MSG);
 			}
 		}
 	});
