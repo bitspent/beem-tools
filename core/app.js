@@ -1,5 +1,4 @@
 const dsteem = require('dsteem');
-
 const MSG = process.env.MSG;
 const PROVIDER = process.env.API_PROVIDER;
 const RSP_ACC = process.env.RSP_ACCOUNT;
@@ -8,22 +7,47 @@ const MAX_SEND = Number(process.env.MAX_SEND || 500);
 
 let serving = false;
 
+let users = [];
+
 function log(x) {
     console.log(x);
+}
+
+function asyncResult(res, rej) {
+    return (e, r) => {
+        if (e) {
+            rej(e);
+        } else {
+            res(r);
+        }
+    }
 }
 
 function replaceAll(str, find, replace) {
     return str.split(find).join(replace);
 }
 
-let users = [];
+async function dbInsertAccount(account) {
+    return new Promise((res, rej) => {
+        db.query('insert into accounts set ?', account, asyncResult(res, rej));
+    });
+}
 
-function id(user) {
-	for(let i = 0; i <users.length; i++) {
-		if(users[i] === user)
-			return i;
+async function dbFindAccount(account) {
+    return new Promise((res, rej) => {
+        db.query(`select * from accounts where account = ?`, [account], asyncResult(res, rej));
+    });
+}
+
+async function found(user) {
+	try {
+		let accounts = await dbFindAccount(user);
+		if(accounts.length === 0)
+			return false;
+	} catch(e) {
+		log(e);
 	}
-	return -1;
+	return true;
 }
 
 async function sendMsg(user, msg) {
@@ -41,14 +65,17 @@ async function sendMsg(user, msg) {
 }
 
 async function checkAndMsg(user, msg) {
-	if(id(user) < 0) {
+	if(await found(user) === false) {
 		try {
-			await sendMsg(user, msg);
 			users.push(user);
-			log('sent message for [' + users.length + '] ' + user);
+			await sendMsg(user, msg);
+			await dbInsertAccount({account: user, modified: new Date()});
+			log(`sent message for [${users.length}] ${user}`);
 		} catch(e) {
 			log(e);
 		}
+	} else {
+		log(`already send message for ${user}`);
 	}
 }
 
@@ -83,27 +110,15 @@ async function serve() {
 			let user = null;
 			
 			if( type === 'comment' || type === 'post') {
-					
+				//
 				// author
 				user = data['author'];
 				await checkAndMsg(user, MSG);
-				
+				//
 				// parent author
 				user = data['parent_author'];
 				await checkAndMsg(user, MSG);
 			}
-/*
-			if( type === 'transfer' ) {
-
-				// from
-				user = data['from'];
-				await checkAndMsg(user, MSG);
-				
-				// parent author
-				user = data['to'];
-				await checkAndMsg(user, MSG);				
-			}
-*/
 		}
 	});
 }
@@ -111,7 +126,6 @@ async function serve() {
 ////////////////////////////////////////////////////
 // EXPORTS /////////////////////////////////////////
 ////////////////////////////////////////////////////
-
 module.exports = {
     
     stats: function() {
