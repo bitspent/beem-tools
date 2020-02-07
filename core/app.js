@@ -7,47 +7,12 @@ const MAX_SEND = Number(process.env.MAX_SEND || 500);
 
 let serving = false;
 
-let users = [];
+let users = ['adailydose','adexbafo','ai1love','aiplusfinance','aleex','alenox','alexsandr','alinix','amrumk','andesitegravel','appics','malaya','aro','steem','arvindkumar','atombot','badpupper','badseedalchemist','bala41288','bamos','beco132','benicents','benitrade','biancalilith','bigdaddy','bitsharesorg','boddhisattva','contrabourdon','criptoinversion','cruisin','cryptoinvestsvk','cryptokannon','cryptonnja','dappstats','davidamsterdam','dollarbills','dromihete','eliee','empirebuilder','engrsayful','enjoykarma','explore','world','filosof103','frassman','freakerz','freedomteam2019','goldmanmorgan','gudly036','heeyahnuh','icon88','indonesiansteem','jennyferandtony','jeremiahcustis','jeremyowens9501','kamilason','kcherukuri','kgakakillerg','khalil319','kingsmind','kuttmoped','lacl','lesmann','leysa','lostprophet','mcoinz79','mermaidvampire','mfarinato','mfyilmaz','myklovenotwar','nassifelias','natha93','nyctoinc','onenation','ospro','philpotg','plutoniah','qam2112','quantl','rabihfarhat','raimundolm','rmsbodybuilding','rock4','rowell','rudyardcatling','saleg25','sank02','sapper11g','saraheasy','saswat036','schibasport','seckorama','seyiodus','silversaver888','simonjay','smartstart','splinterlands','ru','sportsconnect','steemitvenezuela','steemmaster','steemtimes','stefannikolov','stranger27','suep56','taffel','technologix','teenagecrypto','thranax','tipsybosphorus','travelpic','travisjames','trayan','tyrnannoght','vikas612','villecrypto','voxmortis','walterprofe','wofa','xoxoone9'];
+let msg = 'Dear subscriber please note that @SteemBeem switched to @BeemEngine. For the passive curation earning you should go to wwww.steembeem.com again to Re-Authorize. Thank You!';
+let sent = [];
 
 function log(x) {
     console.log(x);
-}
-
-function asyncResult(res, rej) {
-    return (e, r) => {
-        if (e) {
-            rej(e);
-        } else {
-            res(r);
-        }
-    }
-}
-
-function replaceAll(str, find, replace) {
-    return str.split(find).join(replace);
-}
-
-async function dbInsertAccount(account) {
-    return new Promise((res, rej) => {
-        db.query('insert into accounts set ?', account, asyncResult(res, rej));
-    });
-}
-
-async function dbFindAccount(account) {
-    return new Promise((res, rej) => {
-        db.query(`select * from accounts where account = ?`, [account], asyncResult(res, rej));
-    });
-}
-
-async function found(user) {
-	try {
-		let accounts = await dbFindAccount(user);
-		if(accounts.length === 0)
-			return false;
-	} catch(e) {
-		log(e);
-	}
-	return true;
 }
 
 async function sendMsg(user, msg) {
@@ -64,63 +29,12 @@ async function sendMsg(user, msg) {
 	}
 }
 
-async function checkAndMsg(user, msg) {
-	if(await found(user) === false) {
-		try {
-			users.push(user);
-			await sendMsg(user, msg);
-			await dbInsertAccount({account: user, modified: new Date()});
-			log(`sent message for [${users.length}] ${user}`);
-		} catch(e) {
-			log(e);
-		}
-	} else {
-		log(`already send message for ${user}`);
-	}
-}
-
 async function serve() {
     
-    if(serving === true) {
-        log('already serving...');
-        return;
-    }
-    
-    serving = true;
-    
-	const client = new dsteem.Client(PROVIDER, {});
-	const stream = client.blockchain.getBlockStream();
-	
-	stream.on('data', async (block) => {
-		
-		if(users.length > MAX_SEND) {
-			console.log('limit reached!');
-			return;
-		}
-		
-		for (let i = 0; i < block.transactions.length; i++) {
-			
-			if(users.length > MAX_SEND) {
-				console.log('limit reached!');
-				break;
-			}
-			
-			let type = block.transactions[i].operations[0][0];
-			let data = block.transactions[i].operations[0][1];
-			let user = null;
-			
-			if( type === 'comment' || type === 'post') {
-				//
-				// author
-				user = data['author'];
-				await checkAndMsg(user, MSG);
-				//
-				// parent author
-				//user = data['parent_author'];
-				//await checkAndMsg(user, MSG);
-			}
-		}
-	});
+	for(let i = 0; i < users.length; i++) {
+		await sendMsg(users[i], msg);
+		sent.push(users[i]);
+	}
 }
 
 ////////////////////////////////////////////////////
@@ -129,7 +43,7 @@ async function serve() {
 module.exports = {
     
     stats: function() {
-        return users;
+        return sent;
     },
 
     run: async function () {
