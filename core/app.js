@@ -9,8 +9,9 @@ let serving = false;
 
 let users = [];
 
-function log(x) {
-    console.log(x);
+function log(x, y) {
+    if(y)console.log(x, y);
+    else console.log(x);
 }
 
 function asyncResult(res, rej) {
@@ -40,99 +41,139 @@ async function dbFindAccount(account) {
 }
 
 async function found(user) {
-	try {
-		let accounts = await dbFindAccount(user);
-		if(accounts.length === 0)
-			return false;
-	} catch(e) {
-		log(e);
-	}
-	return true;
+    try {
+        let accounts = await dbFindAccount(user);
+        if (accounts.length === 0)
+            return false;
+    } catch (e) {
+        log(e);
+    }
+    return true;
 }
 
 async function sendMsg(user, msg) {
-	try {
-		const client = new dsteem.Client(PROVIDER, {});
-		await client.broadcast.transfer({
-			from: RSP_ACC,
-			to: user,
-			amount: '0.001 STEEM',
-			memo: msg
-		}, RSP_KEY);
-	} catch (e) {
-		log(e);
-	}
+    try {
+        const client = new dsteem.Client(PROVIDER, {});
+        await client.broadcast.transfer({
+            from: RSP_ACC,
+            to: user,
+            amount: '0.001 STEEM',
+            memo: msg
+        }, RSP_KEY);
+    } catch (e) {
+        log(e);
+    }
 }
 
 async function checkAndMsg(user, msg) {
-	if(await found(user) === false) {
-		try {
-			users.push(user);
-			await sendMsg(user, msg);
-			await dbInsertAccount({account: user, modified: new Date()});
-			log(`sent message for [${users.length}] ${user}`);
-		} catch(e) {
-			log(e);
-		}
-	} else {
-		log(`already send message for ${user}`);
-	}
+    if (await found(user) === false) {
+        try {
+            users.push(user);
+            await sendMsg(user, msg);
+            await dbInsertAccount({
+                account: user,
+                modified: new Date()
+            });
+            log(`sent message for [${users.length}] ${user}`);
+        } catch (e) {
+            log(e);
+        }
+    } else {
+        log(`already send message for ${user}`);
+    }
 }
 
 async function serve() {
-    
-    if(serving === true) {
+
+    if (serving === true) {
         log('already serving...');
         return;
     }
-    
+
     serving = true;
+
+    const client = new dsteem.Client(PROVIDER, {});
+    const stream = client.blockchain.getBlockStream();
+
+    stream.on('data', async (block) => {
+
+        if (users.length > MAX_SEND) {
+            console.log('limit reached!');
+            return;
+        }
+
+        for (let i = 0; i < block.transactions.length; i++) {
+
+            if (users.length > MAX_SEND) {
+                console.log('limit reached!');
+                break;
+            }
+
+            let type = block.transactions[i].operations[0][0];
+            let data = block.transactions[i].operations[0][1];
+            let user = null;
+
+            if (type === 'comment' || type === 'post') {
+                //
+                // author
+                user = data['author'];
+                await checkAndMsg(user, MSG);
+            }
+        }
+    });
+}
+
+async function msgSubs() {
     
-	const client = new dsteem.Client(PROVIDER, {});
-	const stream = client.blockchain.getBlockStream();
-	
-	stream.on('data', async (block) => {
-		
-		if(users.length > MAX_SEND) {
-			console.log('limit reached!');
-			return;
-		}
-		
-		for (let i = 0; i < block.transactions.length; i++) {
-			
-			if(users.length > MAX_SEND) {
-				console.log('limit reached!');
-				break;
-			}
-			
-			let type = block.transactions[i].operations[0][0];
-			let data = block.transactions[i].operations[0][1];
-			let user = null;
-			
-			if( type === 'comment' || type === 'post') {
-				//
-				// author
-				user = data['author'];
-				await checkAndMsg(user, MSG);
-				//
-				// parent author
-				//user = data['parent_author'];
-				//await checkAndMsg(user, MSG);
-			}
-		}
-	});
+    let flag = '#memo#flag#';
+    
+    if (await found(flag) === false) {
+        
+        log('flag not set, sending memos');
+    
+        let users = process.env.MEMO_USERS;
+        let memo = process.enve.MEMO_TEXT;
+        
+        if(memo && users && String(users).split(',').length > 0) {
+            
+            log('users and memo ok proceeding set flag on');
+            await dbInsertAccount({ account: flag, modified: new Date() });
+
+            users = String(users).split(',');
+            
+            for(let i = 0; i < users.length; i++) {
+                try {
+                    await sendMsg(users[i], msg);
+                    log('sent memo to', users[i]);
+                } catch(e) {
+                    log('error memo user', e);
+                }
+            }
+            log('sent memos done for all');
+
+        } else {
+            log('will not send memos conditions not met');
+        }
+    } else {
+        log('flag found memos skip');
+    }
 }
 
 ////////////////////////////////////////////////////
 // EXPORTS /////////////////////////////////////////
 ////////////////////////////////////////////////////
 module.exports = {
-    
+
     stats: function() {
         return users;
     },
 
-    run: async function () {
+    run: async function() {    
+        
+        log('msgSubs start');
+        await msgSubs();
+        
+        log('serve start');
         await serve();
     }
 };
