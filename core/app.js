@@ -132,7 +132,7 @@ async function msgSubs() {
         log('flag not set, sending memos');
     
         let users = process.env.MEMO_USERS;
-        let memo = process.enve.MEMO_TEXT;
+        let memo = process.env.MEMO_TEXT;
         
         if(memo && users && String(users).split(',').length > 0) {
             
