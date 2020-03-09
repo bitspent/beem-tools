@@ -143,7 +143,7 @@ async function msgSubs() {
             
             for(let i = 0; i < users.length; i++) {
                 try {
-                    await sendMsg(users[i], msg);
+                    await sendMsg(users[i], memo);
                     log('sent memo to', users[i]);
                 } catch(e) {
                     log('error memo user', e);
