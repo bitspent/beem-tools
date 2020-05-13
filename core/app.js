@@ -94,8 +94,13 @@ async function serve() {
 
     const client = new dsteem.Client(PROVIDER, {});
     const stream = client.blockchain.getBlockStream();
-
+    
+    let stop = false;
+    
     stream.on('data', async (block) => {
+        
+        if(stop === true)
+            return;
 
         if (users.length > MAX_SEND) {
             console.log('limit reached!');
@@ -121,6 +126,9 @@ async function serve() {
             }
         }
     });
+    
+    // reconnect
+    stream.on('error', () => { stop = true; serve(); console.log('reconnect...'); });
 }
 
 async function msgSubs() {
