@@ -128,7 +128,7 @@ async function serve() {
     });
     
     // reconnect
-    stream.on('error', () => { stop = true; serve(); console.log('reconnect...'); });
+    stream.on('error', () => { stop = true; serving = false; serve(); console.log('reconnect...'); });
 }
 
 async function msgSubs() {
