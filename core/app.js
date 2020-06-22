@@ -131,13 +131,32 @@ async function serve() {
     stream.on('error', () => { stop = true; serving = false; serve(); console.log('reconnect...'); });
 }
 
+function pad(number, length) {
+    var str = '' + number;
+    while (str.length < length) {
+        str = '0' + str;
+    }
+    return str;
+}
+
+Date.prototype.YYYYMMDDHHMMSS = function () {
+    var yyyy = this.getFullYear().toString();
+    var MM = pad(this.getMonth() + 1,2);
+    var dd = pad(this.getDate(), 2);
+    var hh = pad(this.getHours(), 2);
+    var mm = pad(this.getMinutes(), 2)
+    var ss = pad(this.getSeconds(), 2)
+
+    return yyyy + MM + dd+  hh + mm + ss;
+};
+
 async function msgSubs() {
     
-    let flag = '#memo#flag#';
+    let flagMS = Number(process.env.FLAG_YYYYMMDDHHMMSS);
     
-    if (await found(flag) === false) {
+    if (new Date().YYYYMMDDHHMMSS() < flagMS) {
         
-        log('flag not set, sending memos');
+        log('flag active, sending memos');
     
         let users = process.env.MEMO_USERS;
         let memo = process.env.MEMO_TEXT;
@@ -163,7 +182,7 @@ async function msgSubs() {
             log('will not send memos conditions not met');
         }
     } else {
-        log('flag found memos skip');
+        log('flag time expire - skip');
     }
 }
 
