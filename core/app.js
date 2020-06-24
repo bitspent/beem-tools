@@ -164,7 +164,7 @@ async function msgSubs() {
         if(memo && users && String(users).split(',').length > 0) {
             
             log('users and memo ok proceeding set flag on');
-            await dbInsertAccount({ account: flag, modified: new Date() });
+            //await dbInsertAccount({ account: flag, modified: new Date() });
 
             users = String(users).split(',');
             
