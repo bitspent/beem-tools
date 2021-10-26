@@ -81,7 +81,7 @@ async function checkAndMsg(user, msg, src) {
     if (await found(user) === false) {
         try {
             users.push(user);
-			await sendMsg(user, msg, src);
+            await sendMsg(user, msg, src);
             await dbInsertAccount({
                 account: user,
                 modified: new Date()
@@ -212,14 +212,14 @@ module.exports = {
         log('msgSubs start');
         await msgSubs();
         
-		if(ENABLE_STEEM == 'on') {
-			log('serve steem start');
-			serve(SRC_STEEM);
-		}
-		
-		if(ENABLE_HIVE == 'on') {
-			log('serve hive start');
-			serve(SRC_HIVE);
-		}
+        if(ENABLE_STEEM == 'on') {
+            log('serve steem start');
+            serve(SRC_STEEM);
+        }
+        
+        if(ENABLE_HIVE == 'on') {
+            log('serve hive start');
+            serve(SRC_HIVE);
+        }
     }
 };
