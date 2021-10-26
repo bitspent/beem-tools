@@ -8,7 +8,8 @@
     "test": "node test.js"
   },
   "dependencies": {
-    "dsteem": "^0.11.2",
+    "dsteem": "^0.11.3",
+    "@hiveio/dhive": "^0.14.12",
     "ejs": "^2.5.6",
     "express": "^4.15.2",
     "mysql": "^2.16.0"
