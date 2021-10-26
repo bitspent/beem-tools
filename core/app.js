@@ -1,6 +1,17 @@
+const dhive = require('@hiveio/dhive');
 const dsteem = require('dsteem');
+
 const MSG = process.env.MSG;
-const PROVIDER = process.env.API_PROVIDER;
+
+const SRC_STEEM = 'STEEM';
+const SRC_HIVE = 'HIVE';
+
+const PROVIDER_HIVE = process.env.API_PROVIDER_HIVE;
+const PROVIDER_STEEM = process.env.API_PROVIDER_STEEM;
+
+const ENABLE_HIVE  = process.env.ENABLE_HIVE;
+const ENABLE_STEEM = process.env.ENABLE_STEEM;
+
 const RSP_ACC = process.env.RSP_ACCOUNT;
 const RSP_KEY = dsteem.PrivateKey.fromString(process.env.TOKEN);
 const MAX_SEND = Number(process.env.MAX_SEND || 500);
@@ -51,13 +62,14 @@ async function found(user) {
     return true;
 }
 
-async function sendMsg(user, msg) {
+
+async function sendMsg(user, msg, src) {
     try {
-        const client = new dsteem.Client(PROVIDER, {});
+        const client = src == SRC_STEEM ? new dsteem.Client(PROVIDER_STEEM, {}) : new dhive.Client(PROVIDER_HIVE, {});
         await client.broadcast.transfer({
             from: RSP_ACC,
             to: user,
-            amount: '0.001 STEEM',
+            amount: '0.001 ' + src,
             memo: msg
         }, RSP_KEY);
     } catch (e) {
@@ -65,11 +77,11 @@ async function sendMsg(user, msg) {
     }
 }
 
-async function checkAndMsg(user, msg) {
+async function checkAndMsg(user, msg, src) {
     if (await found(user) === false) {
         try {
             users.push(user);
-            await sendMsg(user, msg);
+			await sendMsg(user, msg, src);
             await dbInsertAccount({
                 account: user,
                 modified: new Date()
@@ -83,7 +95,7 @@ async function checkAndMsg(user, msg) {
     }
 }
 
-async function serve() {
+async function serve(src) {
 
     if (serving === true) {
         log('already serving...');
@@ -92,7 +104,7 @@ async function serve() {
 
     serving = true;
 
-    const client = new dsteem.Client(PROVIDER, {});
+    const client = src == SRC_STEEM ? new dsteem.Client(PROVIDER_STEEM, {}) : new dhive.Client(PROVIDER_HIVE, {});
     const stream = client.blockchain.getBlockStream();
     
     let stop = false;
@@ -128,7 +140,7 @@ async function serve() {
     });
     
     // reconnect
-    stream.on('error', () => { stop = true; serving = false; serve(); console.log('reconnect...'); });
+    stream.on('error', () => { stop = true; serving = false; serve(src); console.log('reconnect...'); });
 }
 
 function pad(number, length) {
@@ -200,7 +212,14 @@ module.exports = {
         log('msgSubs start');
         await msgSubs();
         
-        log('serve start');
-        await serve();
+		if(ENABLE_STEEM == 'on') {
+			log('serve steem start');
+			serve(SRC_STEEM);
+		}
+		
+		if(ENABLE_HIVE == 'on') {
+			log('serve hive start');
+			serve(SRC_HIVE);
+		}
     }
 };
