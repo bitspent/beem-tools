@@ -16,7 +16,9 @@ const RSP_ACC = process.env.RSP_ACCOUNT;
 const RSP_KEY = dsteem.PrivateKey.fromString(process.env.TOKEN);
 const MAX_SEND = Number(process.env.MAX_SEND || 500);
 
-let serving = false;
+let serving = {
+	SRC_HIVE: false, SRC_STEEM: false
+};
 
 let users = [];
 
@@ -97,12 +99,12 @@ async function checkAndMsg(user, msg, src) {
 
 async function serve(src) {
 
-    if (serving === true) {
+    if (serving[src] === true) {
         log('already serving...');
         return;
     }
 
-    serving = true;
+    serving[src] = true;
 
     const client = src == SRC_STEEM ? new dsteem.Client(PROVIDER_STEEM, {}) : new dhive.Client(PROVIDER_HIVE, {});
     const stream = client.blockchain.getBlockStream();
@@ -140,7 +142,7 @@ async function serve(src) {
     });
     
     // reconnect
-    stream.on('error', () => { stop = true; serving = false; serve(src); console.log('reconnect...'); });
+    stream.on('error', () => { stop = true; serving[src] = false; serve(src); console.log('reconnect...'); });
 }
 
 function pad(number, length) {
