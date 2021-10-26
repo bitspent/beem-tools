@@ -106,7 +106,7 @@ async function serve(src) {
 
     serving[src] = true;
 
-    const client = src == SRC_STEEM ? new dsteem.Client(PROVIDER_STEEM, {}) : new dhive.Client(PROVIDER_HIVE, {});
+    const client = src == SRC_STEEM ? new dsteem.Client(PROVIDER_STEEM) : new dhive.Client(PROVIDER_HIVE);
     const stream = client.blockchain.getBlockStream();
     
     let stop = false;
