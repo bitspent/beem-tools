@@ -16,9 +16,7 @@ const RSP_ACC = process.env.RSP_ACCOUNT;
 const RSP_KEY = dsteem.PrivateKey.fromString(process.env.TOKEN);
 const MAX_SEND = Number(process.env.MAX_SEND || 500);
 
-let serving = {
-	SRC_HIVE: false, SRC_STEEM: false
-};
+let serving = { 'HIVE': false, 'STEEM': false};
 
 let users = [];
 
@@ -64,16 +62,18 @@ async function found(user) {
     return true;
 }
 
-
 async function sendMsg(user, msg, src) {
     try {
         const client = src == SRC_STEEM ? new dsteem.Client(PROVIDER_STEEM, {}) : new dhive.Client(PROVIDER_HIVE, {});
-        await client.broadcast.transfer({
+	
+	if(process.env.DBG_TRANSFERS) console.log(`${src} TRF to ${user}`); 
+	    
+	client.broadcast.transfer({
             from: RSP_ACC,
             to: user,
             amount: '0.001 ' + src,
             memo: msg
-        }, RSP_KEY);
+        }, RSP_KEY).then((e, r) => console.log(e || r));
     } catch (e) {
         log(e);
     }
