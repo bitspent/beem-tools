@@ -115,6 +115,9 @@ async function serve(src) {
         
         if(stop === true)
             return;
+	    
+	if(process.env.DBG_BLOCKS)
+	    console.log('got block', block);
 
         if (users.length > MAX_SEND) {
             console.log('limit reached!');
@@ -136,7 +139,7 @@ async function serve(src) {
                 //
                 // author
                 user = data['author'];
-                await checkAndMsg(user, MSG);
+                await checkAndMsg(user, MSG, src);
             }
         }
     });
