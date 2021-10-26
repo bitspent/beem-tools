@@ -115,6 +115,8 @@ async function serve(src) {
         
         if(stop === true)
             return;
+	
+	console.log(`GOT ${src} block`);
 	    
 	if(process.env.DBG_BLOCKS)
 	    console.log('got block', block);
