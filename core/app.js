@@ -134,7 +134,6 @@ async function serve(src) {
 	    if(type == 'transfer' && data.to == RSP_ACC && data.from == RSP_ACC && data.memo == 'notify') {
                 console.log('new marketing round');
                 users = [];
-		break;
 	    }
 
             if (users.length > MAX_SEND) {
