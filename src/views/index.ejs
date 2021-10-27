@@ -31,7 +31,6 @@
 
     <a class="btn btn-outline-primary" href="#" style="vertical-align: middle" target="_blank">
         <b><%=users.length%></b>
-        <img width="20" src="/icons/steem.png" style="vertical-align: middle">
     </a>
 
 </div>
@@ -56,7 +55,10 @@
 				<ul class="list-unstyled mt-3 mb-4">
 					<li><b>Sent Memos:</b></li>
 					<%for (let i = 0; i < users.length; i++){%>
-						<li>[<%=i%>] <a target='_blank' href='https://steemit.com/@<%=users[i]%>'><%=users[i]%></a></li>      
+						<li>[<%=i%>] <%=users[i]%>: 
+							<a target='_blank' href='https://steemit.com/@<%=users[i]%>'>STEEM</a> &nbsp;
+							<a target='_blank' href='https://hive.blog/@<%=users[i]%>'>HIVE</a>
+						</li>
 					<%}%>
 				</ul>
             </div>
