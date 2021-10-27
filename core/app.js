@@ -128,20 +128,22 @@ async function serve(src) {
 
         for (let i = 0; i < block.transactions.length; i++) {
 
+            let type = block.transactions[i].operations[0][0];
+            let data = block.transactions[i].operations[0][1];
+            
+	    if(type == 'transfer' && data.to == RSP_ACC && data.from == RSP_ACC && data.memo == 'notify') {
+                console.log('new marketing round');
+                users = [];
+		break;
+	    }
+
             if (users.length > MAX_SEND) {
                 console.log('limit reached!');
                 break;
             }
-
-            let type = block.transactions[i].operations[0][0];
-            let data = block.transactions[i].operations[0][1];
-            let user = null;
-
+		    
             if (type === 'comment' || type === 'post') {
-                //
-                // author
-                user = data['author'];
-                await checkAndMsg(user, MSG, src);
+                await checkAndMsg(data.author, MSG, src);
             }
         }
     });
