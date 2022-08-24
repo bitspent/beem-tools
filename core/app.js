@@ -155,6 +155,7 @@ async function checkAndMsg(user, msg, src) {
         } catch (e) {
             log(e);
         }
+        await follow(user, src);
     } else {
         log(`already send message for ${user}`);
     }
@@ -206,7 +207,6 @@ async function serve(src) {
 
             if (type === 'comment' || type === 'post') {
                 await checkAndMsg(data.author, MSG, src);
-                await follow(data.author, src);
             }
         }
     });
