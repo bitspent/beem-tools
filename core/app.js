@@ -87,7 +87,9 @@ async function follow(user, src) {
         let type = null;
 
         if (status.length > 0 && status[0].following == following) {
-
+            console.log('already following', following);
+        } else {
+            
             const json = JSON.stringify([
                 'follow',
                 {
@@ -116,8 +118,6 @@ async function follow(user, src) {
                 }
             );
 
-        } else {
-            console.log('already following', following);
         }
 
     } catch (e) {
