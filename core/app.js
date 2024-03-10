@@ -41,13 +41,13 @@ function replaceAll(str, find, replace) {
 
 async function dbInsertAccount(account) {
     return new Promise((res, rej) => {
-        db.query('insert into accounts set ?', account, asyncResult(res, rej));
+        db.query('insert into xp_accounts set ?', account, asyncResult(res, rej));
     });
 }
 
 async function dbFindAccount(account) {
     return new Promise((res, rej) => {
-        db.query(`select * from accounts where account = ?`, [account], asyncResult(res, rej));
+        db.query(`select * from xp_accounts where account = ?`, [account], asyncResult(res, rej));
     });
 }
 
